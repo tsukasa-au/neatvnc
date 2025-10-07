@@ -922,8 +922,8 @@ static void process_fb_update_requests(struct nvnc_client* client)
 		// If there is already more data inflight than the link can
 		// handle, let's not put more load on it:
 		if (client->inflight_bytes > max_inflight_bytes) {
-			nvnc_log(NVNC_LOG_DEBUG, "Exceeded bandwidth limit. Dropping frame. min_rtt: %.3fs, bw: %.2fMB/s",
-			    1e-6 * client->min_rtt, bandwidth / 1024 / 1024);
+			nvnc_log(NVNC_LOG_DEBUG, "Exceeded bandwidth limit. Dropping frame. min_rtt: %.6fs, bw: %.6fB/s",
+			    1e-6 * client->min_rtt, bandwidth);
 			return;
 		}
 	}
