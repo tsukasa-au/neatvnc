@@ -915,14 +915,15 @@ static void process_fb_update_requests(struct nvnc_client* client)
 
 	int bandwidth = bwe_get_estimate(client->bwe);
 	if (bandwidth != 0) {
-		double max_delay = 33.333e-3;
-		int max_inflight = round(max_delay + 1e-6 *
-				client->min_rtt * bandwidth);
+		double time_to_next_frame = 33.333e-3;  // 1 frame at 30fps
+		double max_time_to_drain = time_to_next_frame + 1e-6 * client->min_rtt;
+		int max_inflight_bytes = round(max_time_to_drain * bandwidth);
 
 		// If there is already more data inflight than the link can
 		// handle, let's not put more load on it:
-		if (client->inflight_bytes > max_inflight) {
-			nvnc_log(NVNC_LOG_DEBUG, "Exceeded bandwidth limit. Dropping frame.");
+		if (client->inflight_bytes > max_inflight_bytes) {
+			nvnc_log(NVNC_LOG_DEBUG, "Exceeded bandwidth limit. Dropping frame. min_rtt: %.3fs, bw: %.2fMB/s",
+			    1e-6 * client->min_rtt, bandwidth / 1024 / 1024);
 			return;
 		}
 	}

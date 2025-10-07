@@ -7,10 +7,10 @@
 
 // bandwidth estimator
 struct bwe {
-	int rtt_min;
-	int n_samples;
-	int index;
-	double estimate;
+	int rtt_min;      // round-trip time (microseconds)
+	int n_samples;    // Number of entries in samples
+	int index;        // Next write location
+	double estimate;  // Bandwidth estimate (bytes/sec)
 	struct bwe_sample samples[0];
 };
 
@@ -20,6 +20,7 @@ struct bwe* bwe_create(int rtt_min)
 			SAMPLES_MAX);
 	if (!self)
 		return NULL;
+	self->rtt_min = rtt_min;
 
 	return self;
 }
