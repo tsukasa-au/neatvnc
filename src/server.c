@@ -924,6 +924,7 @@ static void process_fb_update_requests(struct nvnc_client* client)
 		if (client->inflight_bytes > max_inflight_bytes) {
 			nvnc_log(NVNC_LOG_DEBUG, "Exceeded bandwidth limit. Dropping frame. min_rtt: %.6fs, bw: %.6fB/s",
 			    1e-6 * client->min_rtt, bandwidth);
+			bwe_log_state(client->bwe);
 			return;
 		}
 	}

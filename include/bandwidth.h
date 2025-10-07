@@ -12,3 +12,4 @@ void bwe_destroy(struct bwe* self);
 void bwe_feed(struct bwe* self, const struct bwe_sample* sample);
 void bwe_update_rtt_min(struct bwe* self, int rtt_min);
 int bwe_get_estimate(const struct bwe* self);
+void bwe_log_state(const struct bwe* self);

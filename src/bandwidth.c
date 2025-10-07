@@ -105,3 +105,26 @@ int bwe_get_estimate(const struct bwe* self)
 {
 	return round(self->estimate);
 }
+
+void bwe_log_state(const struct bwe* self) {
+	int bytes_total = 0;
+	int rtt_total = 0;
+	int rtt_max = INT32_MIN;
+	int rtt_min = INT32_MAX;
+
+	for (int i = 0; i < self->n_samples; ++i) {
+		const struct bwe_sample* s = get_sample(self, i);
+
+		bytes_total += s->bytes;
+		rtt_total += s->arrival_time - s->departure_time;
+		if (rtt_max < rtt) rtt_max = rtt;
+		if (rtt_min > rtt) rtt_min = rtt;
+	}
+
+  nvnc_log(NVNC_LOG_DEBUG, "[BWE] samples: %d, min_rtt: %.1fms, max_rtt: %.1fms, ttl_rtt: %.1fms, data: %dB",
+      self->n_samples,
+      (double)rtt_min * 1e-3,
+      (double)rtt_max * 1e-3,
+      (double)rtt_total * 1e-3,
+      bytes_total);
+}
