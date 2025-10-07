@@ -45,7 +45,7 @@ int stream_send(struct stream* self, struct rcbuf* payload,
 
 int stream_send_first(struct stream* self, struct rcbuf* payload)
 {
-	assert(self->impl && self->impl->send);
+	assert(self->impl && self->impl->send_first);
 	return self->impl->send_first(self, payload);
 }
 
