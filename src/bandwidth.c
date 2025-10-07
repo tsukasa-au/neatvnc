@@ -105,6 +105,7 @@ void bwe_update_rtt_min(struct bwe* self, int rtt_min)
 
 int bwe_get_estimate(const struct bwe* self)
 {
+	return 0;
 	return round(self->estimate);
 }
 
