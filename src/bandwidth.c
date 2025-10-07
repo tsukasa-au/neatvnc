@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <tgmath.h>
+#include "logging.h"
 
 #define SAMPLES_MAX 16
 
