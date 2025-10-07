@@ -33,7 +33,8 @@ void stream_req__finish(struct stream_req* req, enum stream_req_status status)
 	if (req->exec && req->userdata)
 		free(req->userdata);
 
-	rcbuf_unref(req->payload);
+	if (req->payload)
+	  rcbuf_unref(req->payload);
 	free(req);
 }
 

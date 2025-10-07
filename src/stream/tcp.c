@@ -45,8 +45,6 @@ int stream_tcp_close(struct stream* self)
 	self->state = STREAM_STATE_CLOSED;
 	self->cork = true;
 
-	stream_ref(self);
-
 	while (!TAILQ_EMPTY(&self->send_queue)) {
 		struct stream_req* req = TAILQ_FIRST(&self->send_queue);
 		TAILQ_REMOVE(&self->send_queue, req, link);
@@ -57,16 +55,14 @@ int stream_tcp_close(struct stream* self)
 	close(self->fd);
 	self->fd = -1;
 
-	// unref
-	stream_destroy(self);
-
 	return 0;
 }
 
 void stream_tcp_destroy(struct stream* self)
 {
+	assert(self->state == STREAM_STATE_CLOSED);
+
 	vec_destroy(&self->tmp_buf);
-	stream_close(self);
 	aml_unref(self->handler);
 	free(self);
 }
@@ -142,9 +138,10 @@ static int stream_tcp__flush(struct stream* self)
 			}
 			char* p = req->payload->payload;
 			size_t s = req->payload->size;
-			memmove(p, p + s + bytes_left, -bytes_left);
-			req->payload->size = -bytes_left;
-			stream__poll_rw(self);
+			struct rcbuf* left_over = rcbuf_from_mem(
+			    p + s + bytes_left, -bytes_left);
+			rcbuf_unref(req->payload);
+			req->payload = left_over;
 		}
 
 		if (bytes_left <= 0)
@@ -153,8 +150,14 @@ static int stream_tcp__flush(struct stream* self)
 
 	self->cork = false;
 
-	if (bytes_left == 0 && self->state != STREAM_STATE_CLOSED)
-		stream__poll_r(self);
+
+	if (self->state != STREAM_STATE_CLOSED) {
+    if (TAILQ_EMPTY(&self->send_queue)) {
+      stream__poll_r(self);
+    } else {
+      stream__poll_rw(self);
+    }
+  }
 
 	assert(bytes_left <= 0);
 

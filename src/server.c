@@ -232,6 +232,7 @@ static void defer_client_close(struct nvnc_client* client)
 void close_after_write(void* userdata, enum stream_req_status status)
 {
 	struct stream* stream = userdata;
+	stream_close(stream);
 	stream_destroy(stream);
 }
 
@@ -2114,6 +2115,7 @@ static void on_connection(struct aml_handler* poll_handle)
 payload_failure:
 	pixman_region_fini(&client->damage);
 buffer_failure:
+	stream_close(client->net_stream);
 	stream_destroy(client->net_stream);
 stream_failure:
 	close(fd);

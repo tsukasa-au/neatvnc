@@ -20,3 +20,19 @@ base64 = executable('base64',
 	include_directories: inc,
 )
 test('base64', base64)
+
+stream_interface = executable('stream-interface',
+	[
+		'test-stream-interface.c',
+		'../src/stream/common.c',
+		'../src/stream/tcp.c',
+		'../src/stream/interface.c',
+		'../src/rcbuf.c',
+		'../src/vec.c',
+	],
+	include_directories: include_directories('../include', '../src', '..'),
+	dependencies: [
+	  aml
+	],
+)
+test('stream-interface', stream_interface)

@@ -20,6 +20,7 @@
 
 void stream_ref(struct stream* self)
 {
+	assert(self->ref > 0);
 	self->ref++;
 }
 
