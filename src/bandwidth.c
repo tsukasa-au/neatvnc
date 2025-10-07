@@ -2,7 +2,8 @@
 
 #include <stdlib.h>
 #include <tgmath.h>
-#include "logging.h"
+#include <stdint.h>
+#include "neatvnc.h"
 
 #define SAMPLES_MAX 16
 
@@ -117,7 +118,8 @@ void bwe_log_state(const struct bwe* self) {
 		const struct bwe_sample* s = get_sample(self, i);
 
 		bytes_total += s->bytes;
-		rtt_total += s->arrival_time - s->departure_time;
+		int rtt += s->arrival_time - s->departure_time;
+		rtt_total += rtt;
 		if (rtt_max < rtt) rtt_max = rtt;
 		if (rtt_min > rtt) rtt_min = rtt;
 	}
