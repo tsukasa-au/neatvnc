@@ -106,7 +106,7 @@ void bwe_update_rtt_min(struct bwe* self, int rtt_min)
 int bwe_get_estimate(const struct bwe* self)
 {
 	const double default_rate = 1<<20;  // Assume we always have access to 1MB/s
-	return max(round(self->estimate), default_rate);
+	return fmax(round(self->estimate), default_rate);
 }
 
 void bwe_log_state(const struct bwe* self) {
@@ -125,7 +125,7 @@ void bwe_log_state(const struct bwe* self) {
 		if (rtt_min > rtt) rtt_min = rtt;
 	}
 
-  nvnc_log(NVNC_LOG_DEBUG, "[BWE] samples: %d, min_rtt: %.1fms, max_rtt: %.1fms, ttl_rtt: %.1fms, data: %dMB",
+  nvnc_log(NVNC_LOG_INFO, "[BWE] samples: %d, min_rtt: %.1fms, max_rtt: %.1fms, ttl_rtt: %.1fms, data: %dMB",
       self->n_samples,
       (double)rtt_min * 1e-3,
       (double)rtt_max * 1e-3,
